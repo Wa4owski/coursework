@@ -1,8 +1,7 @@
 package databases.itmo.coursework.model;
 
-import databases.itmo.coursework.entities.CompetenceEntity;
 import databases.itmo.coursework.entities.OrderRequestEntity;
-import databases.itmo.coursework.repo.CompetenceRepo;
+import databases.itmo.coursework.entities.OrderRequestExecutorEntity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -13,8 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,31 +22,48 @@ import org.springframework.stereotype.Component;
 @Setter
 public class OrderRequest {
 
+    private Integer id;
     @NotBlank(message = "Имя заказа не может быть пустым")
     @Length(max = 100, message = "Введенное имя слишком длинное")
-    String shortName;
+    private String shortName;
     @NotBlank(message = "Описание заказа не может быть пустым")
     @Length(min = 100, message = "Введенное описание слишком короткое")
-    String description;
+    private String description;
     @Positive(message = "Цена должна быть положительной")
     int price;
     @NotBlank(message = "Выберите требуемую от исполнителя компетенцию")
-    String competence;
+    private String competence;
     @NotNull(message = "Выберите один из вариантов")
     @Enumerated(value = EnumType.STRING)
-    OrderVisibility access;
+    private OrderVisibility access;
+
+    private Set<Executor> executors;
+
+    @Getter
+    private static class Executor{
+        Integer id;
+        String name;
+        Float rate;
+        Boolean customerAgr;
+        Boolean executorAgr;
+
+        private Executor(OrderRequestExecutorEntity orderRequestExecutor) {
+            this.id = orderRequestExecutor.getPrimaryKey().getExecutor().getId();
+            this.name = orderRequestExecutor.getPrimaryKey().getExecutor().getPerson().getFullName();
+            this.rate = orderRequestExecutor.getPrimaryKey().getExecutor().getRate();
+            this.customerAgr = orderRequestExecutor.getCustomerAgr();
+            this.executorAgr = orderRequestExecutor.getExecutorAgr();
+        }
+    }
 
     public OrderRequest(OrderRequestEntity orderRequest) {
         this.shortName = orderRequest.getName();
         this.description = orderRequest.getDescription();
         this.price = orderRequest.getPrice();
         this.competence = orderRequest.getCompetence().getCompetence();
+        this.executors = orderRequest.getOrderRequestExecutors()
+                .stream().map(Executor::new).collect(Collectors.toSet());
+        this.access = orderRequest.getIsPrivate() ? OrderVisibility.private_ : OrderVisibility.public_;
     }
 
-    //    private CompetenceEntity competenceEntity;
-//    public void setCompetence(String competence) {
-//        this.competenceEntity = competenceRepo.findByCompetence(competence)
-//                .orElseThrow(() -> new RuntimeException("competence is out of database"));
-//        this.competence = competence;
-//    }
 }

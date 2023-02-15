@@ -2,10 +2,7 @@ package databases.itmo.coursework.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,4 +21,14 @@ public class CompetenceEntity {
 
     @OneToMany(mappedBy = "competence")
     List<OrderRequestEntity> orderRequests = new ArrayList<>();
+
+    @Setter(AccessLevel.PRIVATE)
+    @ManyToMany
+    @JoinTable(
+            name = "executor_competence",
+            joinColumns = @JoinColumn(name = "competence"),
+            inverseJoinColumns = @JoinColumn(name = "executor_id")
+    )
+    private List<ExecutorEntity> executors = new ArrayList<>();
+
 }

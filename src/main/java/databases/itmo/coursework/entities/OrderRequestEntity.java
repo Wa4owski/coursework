@@ -1,15 +1,19 @@
 package databases.itmo.coursework.entities;
 
+import databases.itmo.coursework.entities.keys.OrderRequestExecutorId;
 import databases.itmo.coursework.model.OrderRequest;
 import databases.itmo.coursework.model.OrderRequestStatus;
 import databases.itmo.coursework.model.OrderVisibility;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -41,12 +45,22 @@ public class OrderRequestEntity {
     @Column(name = "description", nullable = false)
     private String description;
     @Basic
-    @Column(name = "customer_default_agr", nullable = true)
-    private Boolean customerDefaultAgr;
+    @Column(name = "isPrivate", nullable = true)
+    private Boolean isPrivate;
     @Basic
     @Column(name = "status", nullable = true)
     @Enumerated(value = EnumType.STRING)
     private OrderRequestStatus status;
+
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(targetEntity = OrderRequestExecutorEntity.class, mappedBy = "primaryKey.orderRequest")
+    private Set<OrderRequestExecutorEntity> orderRequestExecutors = new HashSet<>();
+
+    public void addExecutor(ExecutorEntity executor, Boolean customerAgr, Boolean executorAgr){
+        OrderRequestExecutorId primaryKey = new OrderRequestExecutorId( this, executor);
+        OrderRequestExecutorEntity orderRequestExecutor = new OrderRequestExecutorEntity(primaryKey, customerAgr, executorAgr);
+        orderRequestExecutors.add(orderRequestExecutor);
+    }
 
     public OrderRequestEntity(CustomerEntity customer, CompetenceEntity competence, OrderRequest orderRequest) {
         this.customer = customer;
@@ -54,6 +68,6 @@ public class OrderRequestEntity {
         this.competence = competence;
         this.price = orderRequest.getPrice();
         this.description = orderRequest.getDescription();
-        this.customerDefaultAgr = orderRequest.getAccess().equals(OrderVisibility.private_);
+        this.isPrivate = orderRequest.getAccess().equals(OrderVisibility.private_);
     }
 }

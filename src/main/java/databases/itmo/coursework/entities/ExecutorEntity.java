@@ -2,12 +2,9 @@ package databases.itmo.coursework.entities;
 
 import databases.itmo.coursework.model.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "executor")//, schema = "s312431", catalog = "studs")
@@ -28,5 +25,18 @@ public class ExecutorEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserStatus status;
+
+    @Setter(AccessLevel.PRIVATE)
+    @ManyToMany(mappedBy = "executors")
+    private List<CompetenceEntity> competences = new ArrayList<>();
+
+    public void addCompetence(CompetenceEntity competence){
+        competence.getExecutors().add(this);
+        competences.add(competence);
+    }
+
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "primaryKey.executor")
+    private Set<OrderRequestExecutorEntity> myOrderRequests = new HashSet<>();
 
 }

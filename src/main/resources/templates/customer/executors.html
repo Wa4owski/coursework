@@ -25,57 +25,59 @@
 
         <div class="col album py-5 bg-light">
             <div class="container">
+                <script th:if="${message != null}" type="text/javascript">
+                    window.onload = function () {
+                        OpenBootstrapPopup();
+                    };
+                    function OpenBootstrapPopup() {
+                        var myModal = new bootstrap.Modal(document.getElementById("modal"));
+                        myModal.show();
+                    }
+                </script>
+                <div th:if="${message != null}" class="modal fade" id="modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <p th:text="${message}"></p>
+                                <button class="btn-close" data-bs-dismiss="modal"
+                                        data-bs-target="#modal"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    <div th:each="orderRequest : ${orderRequests}" th:object="${orderRequest}">
+                    <div th:each="executor : ${executors}" th:object="${executor}">
                         <div class="card shadow-sm">
-                            <div class="card-header" th:text="${orderRequest.shortName}"/>
+                            <img th:src="@{/images/monkey.jpg}" alt="monkey" class="card-img-top"  />
+                            <h5 class="card-header" th:text="${executor.name}"/>
                             <div class="card-body">
-                                <div class="card-text">
-                                    <p th:text="${'Цена: ' + orderRequest.price}"/>
-                                    <p th:text="${orderRequest.description}"/>
-                                </div>
-                                <table class="table table-light align-items-center">
-                                    <p class="table-header">Исполнители:</p>
-                                    <thead>
-                                        <tr>
-                                            <th>Имя</th>
-                                            <th>Рейтинг</th>
-                                            <th th:if="${orderRequest.access.name() == 'private_'}">Отозвать приглашение</th>
-                                            <th th:if="${orderRequest.access.name() == 'public_'}">Принять/Отклонить</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="executor : ${orderRequest.executors}" th:object="${executor}">
-                                            <td th:text="${executor.name}"/>
-                                            <td th:text="${executor.rate} ?: '0'"/>
-                                            <td th:if="${orderRequest.access.name() == 'private_'}">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
-                                                </div>
-                                            </td>
-                                            <td th:if="${orderRequest.access.name() == 'public_'}">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-success"><i class="bi bi-check2"></i></button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                                    </div>
-                                </div>
+                                <i class="fs-5 bi-star"></i><h6 class="card-title" th:text="${executor.rate} ?: '0'"/>
+                                <form th:if="${orderRequestId != null}" th:method="POST" th:action="@{/customer/addExecutor} ">
+                                    <input type="hidden" name="executorId"  th:value="${executor.id}" />
+                                    <input type="hidden" name="orderRequestId" th:value="${orderRequestId}">
+                                    <input type="hidden" name="competence" th:value="${competence}">
+<!--                                    <input type="hidden" th:field="*{competence}" th:value="${competence}">-->
+                                    <button type="submit" class="btn btn-primary" >Добавить</button>
+                                </form>
+
+<!--                                <p class="card-text" th:text="${executor.rate}"/>-->
+<!--                                <div class="card-text" text="Профиль с отзывами"/>-->
+
+<!--                                <div class="d-flex justify-content-between align-items-center">-->
+<!--                                    <div class="btn-group">-->
+<!--                                        <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                    </div>-->
+<!--                                    <small class="text-muted">9 mins</small>-->
+<!--                                </div>-->
                             </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card shadow-sm">
-                            {{< placeholder width="100%" height="225" background="#55595c" color="#eceeef"
-                            class="card-img-top" text="Thumbnail" >}}
+                            <placeholder width="100%" height="225" background="#55595c" color="#eceeef"
+                            class="card-img-top" text="Thumbnail" />
                             <div class="card-body">
                                 <p class="card-text">This is a wider card with supporting text below as a natural
                                     lead-in to
