@@ -36,7 +36,10 @@ public class ExecutorEntity {
     }
 
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "primaryKey.executor")
+    @OneToMany(mappedBy = "primaryKey.executor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderRequestExecutorEntity> myOrderRequests = new HashSet<>();
 
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "executor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<OrderEntity> myOrders = new HashSet<>();
 }

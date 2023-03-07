@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 public class OrderRequest {
 
     private Integer id;
+
+    private Customer customer;
     @NotBlank(message = "Имя заказа не может быть пустым")
     @Length(max = 100, message = "Введенное имя слишком длинное")
     private String shortName;
@@ -57,13 +59,17 @@ public class OrderRequest {
     }
 
     public OrderRequest(OrderRequestEntity orderRequest) {
+        this.customer = new Customer(orderRequest.getCustomer());
+        this.id = orderRequest.getId();
         this.shortName = orderRequest.getName();
         this.description = orderRequest.getDescription();
         this.price = orderRequest.getPrice();
         this.competence = orderRequest.getCompetence().getCompetence();
+        //filter because we will not  show declined executors(customerAgr == false) in view
         this.executors = orderRequest.getOrderRequestExecutors()
-                .stream().map(Executor::new).collect(Collectors.toSet());
+                .stream().map(Executor::new).filter(o-> o.customerAgr == null || o.customerAgr).collect(Collectors.toSet());
         this.access = orderRequest.getIsPrivate() ? OrderVisibility.private_ : OrderVisibility.public_;
+
     }
 
 }

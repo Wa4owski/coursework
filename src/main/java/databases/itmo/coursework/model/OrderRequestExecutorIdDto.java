@@ -5,12 +5,11 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddExecutorRequest {
+public class OrderRequestExecutorIdDto {
     private Integer executorId;
     private Integer orderRequestId;
-    private String executorName;
 
-    public AddExecutorRequest(Integer orderRequestId, Integer executorId) {
+    public OrderRequestExecutorIdDto(Integer orderRequestId, Integer executorId) {
         this.orderRequestId = orderRequestId;
         this.executorId = executorId;
     }

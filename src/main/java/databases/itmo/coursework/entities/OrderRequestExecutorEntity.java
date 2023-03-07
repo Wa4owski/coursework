@@ -1,6 +1,7 @@
 package databases.itmo.coursework.entities;
 
 import databases.itmo.coursework.entities.keys.OrderRequestExecutorId;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -27,8 +28,10 @@ public class OrderRequestExecutorEntity {
     @CreationTimestamp
     private Timestamp createdAt;
     @Column(name = "customer_agr")
+    @Nullable
     private Boolean customerAgr;
     @Column(name = "executor_agr")
+    @Nullable
     private Boolean executorAgr;
 
     public OrderRequestExecutorEntity(OrderRequestExecutorId primaryKey, Boolean customerAgr, Boolean executorAgr) {

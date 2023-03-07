@@ -12,7 +12,6 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -47,19 +46,20 @@ public class OrderRequestEntity {
     @Basic
     @Column(name = "isPrivate", nullable = true)
     private Boolean isPrivate;
-    @Basic
+
     @Column(name = "status", nullable = true)
     @Enumerated(value = EnumType.STRING)
     private OrderRequestStatus status;
 
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(targetEntity = OrderRequestExecutorEntity.class, mappedBy = "primaryKey.orderRequest")
+    @OneToMany(targetEntity = OrderRequestExecutorEntity.class, mappedBy = "primaryKey.orderRequest",
+                cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderRequestExecutorEntity> orderRequestExecutors = new HashSet<>();
 
     public void addExecutor(ExecutorEntity executor, Boolean customerAgr, Boolean executorAgr){
         OrderRequestExecutorId primaryKey = new OrderRequestExecutorId( this, executor);
         OrderRequestExecutorEntity orderRequestExecutor = new OrderRequestExecutorEntity(primaryKey, customerAgr, executorAgr);
-        orderRequestExecutors.add(orderRequestExecutor);
+        this.orderRequestExecutors.add(orderRequestExecutor);
     }
 
     public OrderRequestEntity(CustomerEntity customer, CompetenceEntity competence, OrderRequest orderRequest) {

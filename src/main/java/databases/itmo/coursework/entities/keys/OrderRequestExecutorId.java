@@ -2,7 +2,7 @@ package databases.itmo.coursework.entities.keys;
 
 import databases.itmo.coursework.entities.ExecutorEntity;
 import databases.itmo.coursework.entities.OrderRequestEntity;
-import databases.itmo.coursework.model.Executor;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -19,11 +19,13 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 public class OrderRequestExecutorId implements Serializable {
-    @ManyToOne(targetEntity = OrderRequestEntity.class)
+    @ManyToOne(targetEntity = OrderRequestEntity.class,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "order_request_id", nullable = false)
     private OrderRequestEntity orderRequest;
 
-    @ManyToOne(targetEntity = ExecutorEntity.class)
+    @ManyToOne(targetEntity = ExecutorEntity.class,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "executor_id", nullable = false)
     private ExecutorEntity executor;
 }

@@ -1,15 +1,13 @@
 package databases.itmo.coursework.entities;
 
-import databases.itmo.coursework.model.UserRole;
 import databases.itmo.coursework.model.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -31,12 +29,17 @@ public class CustomerEntity {
     private PersonEntity person;
 
     @Column(name = "rate", nullable = true, precision = 0)
-    private Double rate;
+    private Float rate;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "customer")
     List<OrderRequestEntity> orderRequests = new ArrayList<>();
+
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "customer")
+    Set<OrderEntity> orders = new HashSet<>();
 }
