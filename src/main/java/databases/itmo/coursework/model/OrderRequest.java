@@ -30,6 +30,7 @@ public class OrderRequest {
     private String shortName;
     @NotBlank(message = "Описание заказа не может быть пустым")
     @Length(min = 100, message = "Введенное описание слишком короткое")
+    @Length(max = 255, message = "Введенное описание слишком длинное")
     private String description;
     @Positive(message = "Цена должна быть положительной")
     int price;
@@ -65,6 +66,7 @@ public class OrderRequest {
         this.description = orderRequest.getDescription();
         this.price = orderRequest.getPrice();
         this.competence = orderRequest.getCompetence().getCompetence();
+        this.access = (orderRequest.getIsPrivate() ? OrderVisibility.private_ : OrderVisibility.public_);
         //filter because we will not  show declined executors(customerAgr == false) in view
         this.executors = orderRequest.getOrderRequestExecutors()
                 .stream().map(Executor::new).filter(o-> o.customerAgr == null || o.customerAgr).collect(Collectors.toSet());

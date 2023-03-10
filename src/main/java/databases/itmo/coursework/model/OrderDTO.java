@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class OrderDTO {
+
+    private Integer id;
     private Integer executorId;
     private Integer customerId;
     private OrderRequest orderRequest;
@@ -17,6 +19,7 @@ public class OrderDTO {
     private OrderStatus status;
 
     public OrderDTO(OrderEntity orderEntity) {
+        this.id = orderEntity.getId();
         this.executorId = orderEntity.getExecutor().getId();
         this.customerId = orderEntity.getCustomer().getId();
         this.orderRequest = new OrderRequest(orderEntity.getOrderRequest());

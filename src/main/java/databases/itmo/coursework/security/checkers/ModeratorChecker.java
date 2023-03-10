@@ -2,7 +2,7 @@ package databases.itmo.coursework.security.checkers;
 
 import databases.itmo.coursework.entities.ModeratorEntity;
 import databases.itmo.coursework.model.UserRole;
-import databases.itmo.coursework.repo.ModeratorEntityRepo;
+import databases.itmo.coursework.repo.ModeratorRepo;
 import databases.itmo.coursework.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import java.util.Optional;
 @Component
 public class ModeratorChecker extends UserRoleChecker{
     @Autowired
-    ModeratorEntityRepo repository;
+    ModeratorRepo repository;
 
     @Override
     public UserPrincipal check(Integer personId) {

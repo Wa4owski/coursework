@@ -1,6 +1,7 @@
 package databases.itmo.coursework.servises;
 
 import databases.itmo.coursework.entities.*;
+import databases.itmo.coursework.entities.keys.FeedbackId;
 import databases.itmo.coursework.entities.keys.OrderRequestExecutorId;
 import databases.itmo.coursework.model.*;
 import databases.itmo.coursework.repo.CustomerRepo;
@@ -37,19 +38,21 @@ public class CustomerService extends AbstractUserService{
         return orderRequestRepo.save(new OrderRequestEntity(customer, competence, orderRequest)).getId();
     }
 
-    public List<OrderRequest> getOrderRequests(Integer customerId){
+    public List<OrderRequest> getOpenedOrderRequests(Integer customerId){
         return orderRequestRepo.findAllByCustomerId(customerId).stream()
+                .filter(o -> o.getStatus().equals(OrderRequestStatus.opened))
                 .map(OrderRequest::new).collect(Collectors.toList());
     }
+
 
     public List<OrderDTO> getAllCustomerOrders(Integer customerId){
         return customerRepo.findById(customerId).orElseThrow(() -> new ExecutionException("No customer with such id")).getOrders()
                 .stream().map(OrderDTO::new).collect(Collectors.toList());
     }
 
-    public List<OrderDTO> getActiveCustomerOrders(Integer customerId){
+    public List<OrderDTO> getCustomerOrdersWithNoFeedback(Integer customerId){
         return customerRepo.findById(customerId).orElseThrow(() -> new ExecutionException("No customer with such id")).getOrders()
-                .stream().filter(o -> o.getStatus().equals(OrderStatus.started)).map(OrderDTO::new).collect(Collectors.toList());
+                .stream().filter(o -> !o.clientSentFeedback(FeedbackId.ClientType.customer)).map(OrderDTO::new).collect(Collectors.toList());
     }
 
     public List<Executor> getExecutorsByCompetence(String competenceName) {
@@ -156,7 +159,17 @@ public class CustomerService extends AbstractUserService{
                 .orElseThrow(()->new ExecutionException("no such orderRequestExecutor"));
     }
 
-    public void sendFeedback(FeedbackDTO feedback) {
+    public void sendFeedback(FeedbackDTO feedback, Integer customerId) {
+        OrderEntity order = orderRepo.findById(feedback.getOrderId())
+                .orElseThrow(()->new ExecutionException("no order with such id"));
+        if(order.getCustomer().getId() != customerId){
+            throw new ExecutionException("this order doesn't belong to customer");
+        }
+        if(order.clientSentFeedback(FeedbackId.ClientType.customer)){
+            throw new ExecutionException("feedback from customer was already sent");
+        }
 
+        order.addFeedback(feedback, FeedbackId.ClientType.customer);
+        orderRepo.save(order);
     }
 }

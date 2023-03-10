@@ -51,8 +51,7 @@ public class CustomerController {
                             @ModelAttribute("orderRequestIdExecutorId") OrderRequestExecutorIdDto requestIdExecutorIdDto,
                             Model model) {
         Integer customerId = (Integer)model.getAttribute("customerId");
-        List<OrderRequest> orderRequests = customerService.getOrderRequests(customerId);
-        model.addAttribute("orderRequests", orderRequests);
+        model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(customerId));
         return "customer/orderRequests";
     }
 
@@ -98,7 +97,7 @@ public class CustomerController {
     public String getMyOrders(@ModelAttribute("feedback") FeedbackDTO feedback,
                               Model model){
         Integer customerId = (Integer)model.getAttribute("customerId");
-        model.addAttribute("orders", customerService.getActiveCustomerOrders(customerId));
+        model.addAttribute("orders", customerService.getCustomerOrdersWithNoFeedback(customerId));
         return "/customer/orders";
     }
 
@@ -108,11 +107,11 @@ public class CustomerController {
                                Model model){
         Integer customerId = (Integer)model.getAttribute("customerId");
         if(result.hasErrors()){
-            model.addAttribute("orders", customerService.getActiveCustomerOrders(customerId));
+            model.addAttribute("orders", customerService.getCustomerOrdersWithNoFeedback(customerId));
             return "/customer/orders";
         }
-        customerService.sendFeedback(feedback);
-        model.addAttribute("orders", customerService.getActiveCustomerOrders(customerId));
+        customerService.sendFeedback(feedback, customerId);
+        model.addAttribute("orders", customerService.getCustomerOrdersWithNoFeedback(customerId));
         return "redirect:/customer/orders";
     }
 
@@ -123,7 +122,7 @@ public class CustomerController {
                                   Model model){
         Integer customerId = ((UserPrincipal) auth.getPrincipal()).getUserSpecId();
         customerService.declineExecutor(new OrderRequestExecutorIdDto(orderRequestId, executorId), customerId);
-        model.addAttribute("orderRequests", customerService.getOrderRequests(executorId));
+        model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(executorId));
         return "customer/orderRequests";
     }
 
@@ -133,7 +132,7 @@ public class CustomerController {
         Integer customerId = (Integer) model.getAttribute("customerId");
         customerService.acceptExecutor(requestIdExecutorIdDto,
                 customerId);
-        model.addAttribute("orderRequests", customerService.getOrderRequests(customerId));
+        model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(customerId));
         return "customer/orderRequests";
     }
 

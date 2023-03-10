@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -30,8 +31,9 @@ public class OrderRequestEntity {
     @ManyToOne(targetEntity = CustomerEntity.class)
     @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customer;
-    @Basic
+
     @Column(name = "created_at")
+    @CreationTimestamp
     private Timestamp createdAt;
 
     @ManyToOne(targetEntity = CompetenceEntity.class)
@@ -69,5 +71,6 @@ public class OrderRequestEntity {
         this.price = orderRequest.getPrice();
         this.description = orderRequest.getDescription();
         this.isPrivate = orderRequest.getAccess().equals(OrderVisibility.private_);
+        this.status = OrderRequestStatus.opened;
     }
 }
