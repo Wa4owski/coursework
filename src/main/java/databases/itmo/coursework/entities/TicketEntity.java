@@ -1,5 +1,6 @@
 package databases.itmo.coursework.entities;
 
+import databases.itmo.coursework.entities.keys.TicketId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +19,8 @@ public class TicketEntity {
 
     public enum TicketStatus {opened, closed};
 
-    @Id
-    @OneToOne(targetEntity = OrderEntity.class)
-    @JoinColumn(name="id")
-    private OrderEntity orderEntity;
+    @EmbeddedId
+    private TicketId ticketId;
 
     @Column(name = "moderator_id")
     private int moderatorId;
