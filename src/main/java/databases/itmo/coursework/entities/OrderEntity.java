@@ -36,7 +36,7 @@ public class OrderEntity {
     @JoinColumn(name = "customer_id", nullable = false)
     CustomerEntity customer;
 
-    @Column(name = "status", columnDefinition = "varchar(10) default 'opened'", nullable = false)
+    @Column(name = "status", columnDefinition = "varchar(10) default 'started'", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
 
