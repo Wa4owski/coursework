@@ -30,23 +30,47 @@
             <div class="row">
               <div class="col-md-6 offset-md-2">
                 <p>Удалить отзыв об исполнителе</p>
-                <label for="delete_feedback_about_executor_true">Да
-                  <input class="form-check-input" type="radio" value="True" th:field="*{delete_feedback_about_executor}" id="delete_feedback_about_executor_true" checked/>
-                </label>
-                <label for="delete_feedback_about_executor_false">Нет
-                  <input class="form-check-input" type="radio" value="False" th:field="*{delete_feedback_about_executor}" id="delete_feedback_about_executor_false"/>
-                </label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{delete_feedback_about_executor}" checked>
+                  <label class="form-check-label">
+                    Нет
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input"  type="radio" th:value="${true}" th:field="*{delete_feedback_about_executor}">
+                  <label class="form-check-label">
+                    Да
+                  </label>
+                </div>
+<!--                <label for="delete_feedback_about_executor_true">Да-->
+<!--                  <input class="form-check-input" type="radio" th:value="${true}" th:field="*{delete_feedback_about_executor}" id="delete_feedback_about_executor_true"/>-->
+<!--                </label>-->
+<!--                <label for="delete_feedback_about_executor_false">Нет-->
+<!--                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{delete_feedback_about_executor}" id="delete_feedback_about_executor_false"/>-->
+<!--                </label>-->
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 offset-md-2">
                 <p>Забанить исполнителя?</p>
-                <label for="ban_executor_true">Да
-                  <input class="form-check-input" type="radio" value="True" th:field="*{ban_executor}" id="ban_executor_true" checked/>
-                </label>
-                <label for="ban_executor_false">Нет
-                  <input class="form-check-input" type="radio" value="False" th:field="*{ban_executor}" id="ban_executor_false"/>
-                </label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{ban_executor}" checked>
+                  <label class="form-check-label">
+                    Нет
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input"  type="radio" th:value="${true}" th:field="*{ban_executor}">
+                  <label class="form-check-label">
+                    Да
+                  </label>
+                </div>
+<!--                <label for="ban_executor_true">Да-->
+<!--                  <input class="form-check-input" type="radio" th:value="${true}" th:field="*{ban_executor}" id="ban_executor_true"/>-->
+<!--                </label>-->
+<!--                <label for="ban_executor_false">Нет-->
+<!--                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{ban_executor}" id="ban_executor_false"/>-->
+<!--                </label>-->
               </div>
             </div>
             <div class="row">
@@ -60,27 +84,52 @@
             <div class="row">
               <div class="col-md-6 offset-md-2">
                 <p>Удалить отзыв о заказчике</p>
-                <label for="delete_feedback_about_customer">Да
-                  <input class="form-check-input" type="radio" value="True" th:field="*{delete_feedback_about_customer}" id="delete_feedback_about_customer)" checked/>
-                </label>
-                <label for="delete_feedback_about_customer">Нет
-                  <input class="form-check-input" type="radio" value="False" th:field="*{delete_feedback_about_customer}" id="delete_feedback_about_customer"/>
-                </label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{delete_feedback_about_customer}" checked>
+                  <label class="form-check-label">
+                    Нет
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input"  type="radio" th:value="${true}" th:field="*{delete_feedback_about_customer}">
+                  <label class="form-check-label">
+                    Да
+                  </label>
+                </div>
+<!--                <label for="delete_feedback_about_customer">Да-->
+<!--                  <input class="form-check-input" type="radio" th:value="${true}" th:field="*{delete_feedback_about_customer}" id="delete_feedback_about_customer)"/>-->
+<!--                </label>-->
+<!--                <label for="delete_feedback_about_customer">Нет-->
+<!--                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{delete_feedback_about_customer}" id="delete_feedback_about_customer"/>-->
+<!--                </label>-->
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 offset-md-2">
                 <p>Забанить заказчика?</p>
-                <label for="ban_customer">Да
-                  <input class="form-check-input" type="radio" value="True" th:field="*{ban_customer}" id="ban_customer)" checked/>
-                </label>
-                <label for="ban_customer">Нет
-                  <input class="form-check-input" type="radio" value="False" th:field="*{ban_customer}" id="ban_customer"/>
-                </label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{ban_customer}" checked>
+                  <label class="form-check-label">
+                    Нет
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input"  type="radio" th:value="${true}" th:field="*{ban_customer}">
+                  <label class="form-check-label">
+                    Да
+                  </label>
+                </div>
+<!--                <label for="ban_customer">Да-->
+<!--                  <input class="form-check-input" type="radio" th:value="${true}" th:field="*{ban_customer}" id="ban_customer)" />-->
+<!--                </label>-->
+<!--                <label for="ban_customer">Нет-->
+<!--                  <input class="form-check-input" type="radio" th:value="${false}" th:field="*{ban_customer}" id="ban_customer"/>-->
+<!--                </label>-->
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 offset-md-2">
+                <input type="hidden" th:field="*{orderId}" th:value="${order_id}"/>
                 <button class="btn btn-primary" type="submit">Создать вердикт</button>
               </div>
             </div>

@@ -52,87 +52,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h4>Заказ</h4>
-                            <th>No. 1234</th>
-                        </div>
-                        <div class="card-body">
-                            <h4>Оценка заказчика</h4>
-                            <th>3</th>
-                        </div>
-                        <div class="card-body">
-                            <h4>Отзыв заказчика</h4>
-                            <th>плохо помыл</th>
-                        </div>
-                        <form th:method="POST" th:action="@{/moderator/newVerdict}" class="card mb-3">
-                            <input type="hidden" name="order_id"  th:value="1"/>
-                            <button type="submit" class="btn btn-danger">New verdict</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h4>Заказ</h4>
-                            <th>No. 228</th>
-                        </div>
-                        <div class="card-body">
-                            <h4>Оценка заказчика</h4>
-                            <th>2</th>
-                        </div>
-                        <div class="card-body">
-                            <h4>Отзыв заказчика</h4>
-                            <th>Заплатил за час, а закончил за 30 секунд!!!</th>
-                        </div>
-                        <form th:method="GET" th:action="@{/moderator/addVerdict}" class="card mb-3">
-                            <input type="hidden" name="order_id"  th:value="2"/>
-                            <button type="submit" class="btn btn-danger">New verdict</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-<!--    <div class="row">-->
-<!--        <div class="col-md-6">-->
-<!--            <div th:each="feedback : ${feedbackDTO}" th:object="${feedback}" class="card mb-3">-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Заказ</h4>-->
-<!--                    <th th:text="No. ${feedback.order_id}"/>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Отзыв заказчика</h4>-->
-<!--                    <th th:text="${feedback.customer_feedback}"/>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Оценка заказчика</h4>-->
-<!--                    <th th:text="${feedback.customer_rate}"/>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Отзыв исполнителя</h4>-->
-<!--                    <th th:text="${feedback.executor_feedback}"/>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Оценка исполнителя</h4>-->
-<!--                    <th th:text="${feedback.executor_rate}"/>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <h4>Был создан:</h4>-->
-<!--                    <th th:text="${fedback.created_at}"/>-->
-<!--                </div>-->
-<!--                <form th:method="GET" th:action="@{/moderator/newVerdict}" class="card mb-3">-->
-<!--                    <input type="hidden" name="order_id"  th:value="${feedback.order_id}"/>-->
-<!--                    <button type="submit" class="btn btn-danger">new verdict</button>-->
-<!--                </form>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 
 </div>
 
