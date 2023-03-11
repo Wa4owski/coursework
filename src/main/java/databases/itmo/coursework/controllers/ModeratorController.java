@@ -4,13 +4,10 @@ package databases.itmo.coursework.controllers;
 import databases.itmo.coursework.model.Verdict;
 import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.ModeratorService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -42,16 +39,17 @@ public class ModeratorController {
 
     @PostMapping(path="/newVerdict")
     public ModelAndView newVerdict(Model model,
-                             @RequestParam(name="order_id") Integer order_id) {
+                             @RequestParam(name="order_id") Integer orderId) {
         Verdict newVerdict = new Verdict();
-        newVerdict.setOrder_id(order_id);
+        newVerdict.setOrderId(orderId);
         model.addAttribute("verdict", newVerdict);
         return new ModelAndView("/moderator/newVerdict");
     }
 
     @PostMapping(path="/addVerdict")
-    public String addVerdict(Model model) {
-        // Тут нужно загрузить verdict в бд
+    public String addVerdict(@ModelAttribute("verdict") Verdict verdict,
+                             Model model) {
+        moderatorService.putVerdict(verdict);
         return "redirect:/moderator";
     }
 

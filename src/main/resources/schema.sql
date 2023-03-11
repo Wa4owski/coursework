@@ -49,3 +49,48 @@ create trigger feedback_tr
     after insert or update on feedback
     for each row
 execute function process_feedback();
+
+
+create or replace function process_verdict() returns trigger as $$
+    declare
+cur_executor_id int := (select executor_id from "order_" where "order_".id = new.id);
+        cur_customer_id int := (select customer_id from "order_" where "order_".id = new.id);
+begin
+        if (new.new_rate_for_executor IS NOT NULL) then
+update feedback set rate = new.new_rate_for_executor where
+        feedback.order_id = new.id and feedback.author = 'customer';
+end if;
+
+        if (new.new_rate_for_customer IS NOT NULL) then
+update feedback set rate = new.new_rate_for_customer where
+        feedback.order_id = new.id and feedback.author = 'executor';
+end if;
+
+        if (new.delete_feedback_about_executor = true) then
+update feedback set feedback = null where
+        feedback.order_id = new.id and feedback.author = 'customer';
+end if;
+
+        if (new.delete_feedback_about_customer = true) then
+update feedback set feedback = null where
+        feedback.order_id = new.id and feedback.author = 'executor';
+end if;
+
+        if (new.ban_customer = true) then
+update customer set status = 'banned' where customer.id = cur_customer_id;
+update order_request set status = 'closed' where order_request.customer_id = cur_customer_id;
+end if;
+
+        if (new.ban_executor = true) then
+update executor set status = 'banned' where executor.id = cur_executor_id;
+update order_request_executor set executor_agr = false where order_request_executor.executor_id = cur_executor_id;
+end if;
+
+return new;
+end;
+$$ language plpgsql;
+
+create trigger verdict_tr
+    after insert or update on verdict
+                        for each row
+                        execute function process_verdict();

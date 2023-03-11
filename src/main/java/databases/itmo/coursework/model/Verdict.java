@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Range;
 @Getter
 @Setter
 public class Verdict {
-    private Integer order_id;
+    private Integer orderId;
     @Range(min=1, max=5)
     private Integer new_rate_for_executor;
     @Range(min=1, max=5)
