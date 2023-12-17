@@ -5,14 +5,16 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "competence")
+@Table(name = "competence", schema = "s312431")
 public class CompetenceEntity {
 
     @Id
@@ -23,12 +25,12 @@ public class CompetenceEntity {
     List<OrderRequestEntity> orderRequests = new ArrayList<>();
 
     @Setter(AccessLevel.PRIVATE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "executor_competence",
             joinColumns = @JoinColumn(name = "competence"),
             inverseJoinColumns = @JoinColumn(name = "executor_id")
     )
-    private List<ExecutorEntity> executors = new ArrayList<>();
+    private Set<ExecutorEntity> executors = new HashSet<>();
 
 }

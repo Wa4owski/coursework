@@ -9,24 +9,22 @@ import databases.itmo.coursework.model.Verdict;
 import databases.itmo.coursework.repo.OrderRepo;
 import databases.itmo.coursework.repo.TicketRepo;
 import databases.itmo.coursework.repo.VerdictRepo;
+import lombok.AllArgsConstructor;
 import org.hibernate.sql.exec.ExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ModeratorService {
 
-    @Autowired
-    TicketRepo ticketRepo;
+    private final TicketRepo ticketRepo;
 
-    @Autowired
-    VerdictRepo verdictRepo;
+    private final VerdictRepo verdictRepo;
 
-    @Autowired
-    OrderRepo orderRepo;
+    private final OrderRepo orderRepo;
 
     public List<Ticket> getTicketsByModeratorId(Integer moderatorId) {
         return ticketRepo.findAll().stream()
@@ -40,12 +38,12 @@ public class ModeratorService {
                 .orElseThrow(()->new ExecutionException("no order with such id"));
         VerdictEntity newVerdict = new VerdictEntity();
         newVerdict.setVerdictId(new VerdictId(order));
-        newVerdict.setBanCustomer(verdict.getBan_customer());
-        newVerdict.setBanExecutor(verdict.getBan_executor());
-        newVerdict.setNewRateForCustomer(verdict.getNew_rate_for_customer());
-        newVerdict.setNewRateForExecutor(verdict.getNew_rate_for_executor());
-        newVerdict.setDeleteFeedbackAboutCustomer(verdict.getDelete_feedback_about_customer());
-        newVerdict.setDeleteFeedbackAboutExecutor(verdict.getDelete_feedback_about_executor());
+        newVerdict.setBanCustomer(verdict.getBanCustomer());
+        newVerdict.setBanExecutor(verdict.getBanExecutor());
+        newVerdict.setNewRateForCustomer(verdict.getNewRateForCustomer());
+        newVerdict.setNewRateForExecutor(verdict.getNewRateForExecutor());
+        newVerdict.setDeleteFeedbackAboutCustomer(verdict.getDeleteFeedbackAboutCustomer());
+        newVerdict.setDeleteFeedbackAboutExecutor(verdict.getDeleteFeedbackAboutExecutor());
         verdictRepo.save(newVerdict);
     }
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "order_")
+@Table(name = "order_", schema = "s312431")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,15 +24,15 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @OneToOne(targetEntity = OrderRequestEntity.class)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_request_id", nullable = false)
     OrderRequestEntity orderRequest;
 
-    @ManyToOne(targetEntity = ExecutorEntity.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "executor_id", nullable = false)
     ExecutorEntity executor;
 
-    @ManyToOne(targetEntity = CustomerEntity.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     CustomerEntity customer;
 

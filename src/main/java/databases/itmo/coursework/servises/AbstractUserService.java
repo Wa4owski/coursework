@@ -12,14 +12,15 @@ import java.util.stream.Collectors;
 
 @Service
 public abstract class AbstractUserService {
-    @Autowired
-    CompetenceRepo competenceRepo;
 
     @Autowired
-    OrderRequestRepo orderRequestRepo;
+    protected CompetenceRepo competenceRepo;
 
     @Autowired
-    OrderRepo orderRepo;
+    protected OrderRequestRepo orderRequestRepo;
+
+    @Autowired
+    protected OrderRepo orderRepo;
 
     public List<String> getAllCompetences(){
         return competenceRepo.findAll().stream().map(CompetenceEntity::getCompetence).collect(Collectors.toList());

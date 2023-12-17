@@ -11,9 +11,9 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "customer", uniqueConstraints={
+@Table(name = "customer", schema = "s312431", uniqueConstraints={
         @UniqueConstraint(name="uniqueAccount", columnNames={"person_id"})
-})//, schema = "s312431", catalog = "studs")
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -24,11 +24,11 @@ public class CustomerEntity {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToOne(targetEntity = PersonEntity.class)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
     private PersonEntity person;
 
-    @Column(name = "rate", nullable = true, precision = 0)
+    @Column(name = "rate")
     private Float rate;
 
     @Column(name = "status", nullable = false)

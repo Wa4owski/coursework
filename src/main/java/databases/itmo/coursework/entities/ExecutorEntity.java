@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.*;
 
 @Entity
-@Table(name = "executor")//, schema = "s312431", catalog = "studs")
+@Table(name = "executor", schema = "s312431")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,28 +18,25 @@ public class ExecutorEntity {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToOne(targetEntity = PersonEntity.class)
+    @OneToOne(fetch = FetchType.LAZY)
     private PersonEntity person;
-    @Column(name = "rate", nullable = true, precision = 0)
+    @Column(name = "rate")
     private Float rate;
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserStatus status;
 
     @Setter(AccessLevel.PRIVATE)
-    @ManyToMany(mappedBy = "executors")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "executors")
     private List<CompetenceEntity> competences = new ArrayList<>();
 
-    public void addCompetence(CompetenceEntity competence){
-        competence.getExecutors().add(this);
-        competences.add(competence);
-    }
-
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "primaryKey.executor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "primaryKey.executor",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderRequestExecutorEntity> myOrderRequests = new HashSet<>();
 
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "executor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "executor",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderEntity> myOrders = new HashSet<>();
 }

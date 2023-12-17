@@ -12,7 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "order_request_executor")
+@Table(name = "order_request_executor", schema = "s312431")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

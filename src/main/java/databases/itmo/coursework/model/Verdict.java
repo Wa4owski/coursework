@@ -10,11 +10,11 @@ import org.hibernate.validator.constraints.Range;
 public class Verdict {
     private Integer orderId;
     @Range(min=1, max=5)
-    private Integer new_rate_for_executor;
+    private Integer newRateForExecutor;
     @Range(min=1, max=5)
-    private Integer new_rate_for_customer;
-    private Boolean ban_executor = false;
-    private Boolean ban_customer = false;
-    private Boolean delete_feedback_about_executor = false;
-    private Boolean delete_feedback_about_customer = false;
+    private Integer newRateForCustomer;
+    private Boolean banExecutor = false;
+    private Boolean banCustomer = false;
+    private Boolean deleteFeedbackAboutExecutor = false;
+    private Boolean deleteFeedbackAboutCustomer = false;
 }

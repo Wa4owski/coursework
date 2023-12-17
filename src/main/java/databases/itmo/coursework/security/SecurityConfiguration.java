@@ -25,7 +25,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/customer/**").hasRole("CUSTOMER")
                         .requestMatchers("/executor/**").hasRole("EXECUTOR")

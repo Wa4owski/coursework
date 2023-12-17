@@ -5,7 +5,7 @@ import databases.itmo.coursework.model.OrderRequest;
 import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.ExecutorService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,11 +13,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@AllArgsConstructor
 @RequestMapping(path = "/executor")
 public class ExecutorController {
 
-    @Autowired
-    ExecutorService executorService;
+    private final ExecutorService executorService;
 
     @GetMapping(path = "/orderRequests/{competence}")
     public String getPublicOrderRequests(@PathVariable(name = "competence") String competenceName,
@@ -92,7 +92,7 @@ public class ExecutorController {
             return "/customer/orders";
         }
         executorService.sendFeedback(feedback, executorId);
-        model.addAttribute("orders",executorService.getExecutorOrdersWithNoFeedback(executorId));
+        model.addAttribute("orders", executorService.getExecutorOrdersWithNoFeedback(executorId));
         return "redirect:/customer/orders";
     }
 

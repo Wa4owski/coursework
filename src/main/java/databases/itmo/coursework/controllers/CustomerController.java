@@ -4,7 +4,7 @@ import databases.itmo.coursework.model.*;
 import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.CustomerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,11 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 @RequestMapping(path = "/customer")
 public class CustomerController {
 
-    @Autowired
-    CustomerService customerService;
+    private final CustomerService customerService;
 
     @GetMapping(path = "/executors/{competence}")
     public String executorsByCompetence(@PathVariable(name = "competence") String competenceName,
@@ -42,8 +42,7 @@ public class CustomerController {
     @GetMapping(path = "/newOrder")
     public String newOrderPage(@ModelAttribute("orderRequest") OrderRequest orderRequest,
                                Model model){
-
-        return "customer/newOrder";
+        return "/customer/newOrder";
     }
 
     @GetMapping(path = "/orderRequests")
@@ -86,7 +85,7 @@ public class CustomerController {
         int placesRemain = customerService.addExecutorToOrderRequest(orderRequestExecutorId, customerId);
         if (placesRemain > 0) {
             redirectParams.addAttribute("message", String.format("Исполнитель получил ваше приглашение, отследить его согласие вы можете в разделе" +
-                    " Мои заяки. Вы можете выбрать еще %d сполнителя для выполнения вашего заказа.", placesRemain));
+                    " Мои заявки. Вы можете выбрать еще %d исполнителя для выполнения вашего заказа.", placesRemain));
             redirectParams.addAttribute("orderRequestId", orderRequestId);
             return new ModelAndView("redirect:/customer/executors/" + competence, redirectParams);
         }

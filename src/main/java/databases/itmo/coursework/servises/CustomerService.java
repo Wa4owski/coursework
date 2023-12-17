@@ -7,6 +7,7 @@ import databases.itmo.coursework.model.*;
 import databases.itmo.coursework.repo.CustomerRepo;
 import databases.itmo.coursework.repo.ExecutorRepo;
 import databases.itmo.coursework.repo.OrderRequestExecutorRepo;
+import lombok.AllArgsConstructor;
 import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,19 +17,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CustomerService extends AbstractUserService{
 
     private static final int maxPrivateExecutorsAmount = 3;
 
-    @Autowired
-    CustomerRepo customerRepo;
+    private final CustomerRepo customerRepo;
 
+    private final OrderRequestExecutorRepo orderRequestExecutorRepo;
 
-    @Autowired
-    OrderRequestExecutorRepo orderRequestExecutorRepo;
-
-    @Autowired
-    ExecutorRepo executorRepo;
+    private final ExecutorRepo executorRepo;
 
     public Integer createNewOrderRequest(Integer customerId, OrderRequest orderRequest){
         CustomerEntity customer = customerRepo.findById(customerId)
@@ -39,26 +37,38 @@ public class CustomerService extends AbstractUserService{
     }
 
     public List<OrderRequest> getOpenedOrderRequests(Integer customerId){
-        return orderRequestRepo.findAllByCustomerId(customerId).stream()
+        return orderRequestRepo.findAllByCustomerId(customerId)
+                .stream()
                 .filter(o -> o.getStatus().equals(OrderRequestStatus.opened))
-                .map(OrderRequest::new).collect(Collectors.toList());
+                .map(OrderRequest::new)
+                .collect(Collectors.toList());
     }
 
 
     public List<OrderDTO> getAllCustomerOrders(Integer customerId){
-        return customerRepo.findById(customerId).orElseThrow(() -> new ExecutionException("No customer with such id")).getOrders()
-                .stream().map(OrderDTO::new).collect(Collectors.toList());
+        return customerRepo.findById(customerId)
+                .orElseThrow(() -> new ExecutionException("No customer with such id")).getOrders()
+                .stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
     }
 
     public List<OrderDTO> getCustomerOrdersWithNoFeedback(Integer customerId){
-        return customerRepo.findById(customerId).orElseThrow(() -> new ExecutionException("No customer with such id")).getOrders()
-                .stream().filter(o -> !o.clientSentFeedback(FeedbackId.ClientType.customer)).map(OrderDTO::new).collect(Collectors.toList());
+        return customerRepo.findById(customerId)
+                .orElseThrow(() -> new ExecutionException("No customer with such id"))
+                .getOrders()
+                .stream()
+                .filter(o -> !o.clientSentFeedback(FeedbackId.ClientType.customer))
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
     }
 
     public List<Executor> getExecutorsByCompetence(String competenceName) {
         return competenceRepo.findByCompetence(competenceName)
                 .orElseThrow(() -> new ExecutionException("No competence with such name"))
-                .getExecutors().stream().map(Executor::new).collect(Collectors.toList());
+                .getExecutors()
+                .stream()
+                .map(Executor::new).collect(Collectors.toList());
     }
 
     public int  addExecutorToOrderRequest(OrderRequestExecutorIdDto orderRequestExecutorIdDto, Integer customerId) throws ExecutionException {

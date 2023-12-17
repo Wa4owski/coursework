@@ -4,8 +4,10 @@ import databases.itmo.coursework.entities.*;
 import databases.itmo.coursework.entities.keys.FeedbackId;
 import databases.itmo.coursework.entities.keys.OrderRequestExecutorId;
 import databases.itmo.coursework.model.*;
+import databases.itmo.coursework.repo.CustomerRepo;
 import databases.itmo.coursework.repo.ExecutorRepo;
 import databases.itmo.coursework.repo.OrderRequestExecutorRepo;
+import lombok.AllArgsConstructor;
 import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,43 +17,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ExecutorService extends AbstractUserService {
 
-    @Autowired
-    ExecutorRepo executorRepo;
+    private final ExecutorRepo executorRepo;
 
-    @Autowired
-    OrderRequestExecutorRepo orderRequestExecutorRepo;
+    private final CustomerRepo customerRepo;
 
     public List<OrderRequest> getFreeOrderRequestsByCompetence(String competenceName) {
         return competenceRepo.findByCompetence(competenceName)
                 .orElseThrow(() -> new ExecutionException("No competence with such name"))
                 .getOrderRequests().stream()
+    private final OrderRequestExecutorRepo orderRequestExecutorRepo;
+
                 .filter(orderRequest -> !orderRequest.getIsPrivate()
                         && orderRequest.getStatus().equals(OrderRequestStatus.opened))
                 .map(OrderRequest::new).collect(Collectors.toList());
     }
 
     public List<OrderRequest> getPublicOrderRequestsByExecutorId(Integer executorId) {
-        var requests = executorRepo.findById(executorId).orElseThrow(() -> new ExecutionException("No executor with such id"))
-                .getMyOrderRequests();
-
         return executorRepo.findById(executorId).orElseThrow(() -> new ExecutionException("No executor with such id"))
-                .getMyOrderRequests().stream().filter(orderRequestExecutor -> orderRequestExecutor.executorAgrIsSet() && orderRequestExecutor.getExecutorAgr())
+                .getMyOrderRequests()
+                .stream()
+                .filter(orderRequestExecutor -> orderRequestExecutor.executorAgrIsSet() && orderRequestExecutor.getExecutorAgr())
                 .map(orderRequestExecutor -> orderRequestExecutor.getPrimaryKey().getOrderRequest())
                 .filter(orderRequest -> !orderRequest.getIsPrivate() && orderRequest.getStatus().equals(OrderRequestStatus.opened))
-                .map(OrderRequest::new).collect(Collectors.toList());
+                .map(OrderRequest::new)
+                .collect(Collectors.toList());
     }
 
     public List<OrderRequest> getPrivateOrderRequestsByExecutorId(Integer executorId) {
-        var requests = executorRepo.findById(executorId).orElseThrow(() -> new ExecutionException("No executor with such id"))
-                .getMyOrderRequests();
-
         return executorRepo.findById(executorId).orElseThrow(() -> new ExecutionException("No executor with such id"))
-                .getMyOrderRequests().stream().filter(orderRequestExecutor -> !orderRequestExecutor.executorAgrIsSet())
+                .getMyOrderRequests()
+                .stream()
+                .filter(orderRequestExecutor -> !orderRequestExecutor.executorAgrIsSet())
                 .map(orderRequestExecutor -> orderRequestExecutor.getPrimaryKey().getOrderRequest())
                 .filter(orderRequest -> orderRequest.getIsPrivate() && orderRequest.getStatus().equals(OrderRequestStatus.opened))
-                .map(OrderRequest::new).collect(Collectors.toList());
+                .map(OrderRequest::new)
+                .collect(Collectors.toList());
     }
 
 

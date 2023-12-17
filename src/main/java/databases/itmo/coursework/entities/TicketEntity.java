@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "ticket")
+@Table(name = "ticket", schema = "s312431")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

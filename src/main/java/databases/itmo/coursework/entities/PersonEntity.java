@@ -8,7 +8,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "person")//, schema = "s312431", catalog = "studs")
+@Table(name = "person", schema = "s312431")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,14 +18,14 @@ public class PersonEntity {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Basic
-    @Column(name = "email", nullable = false, length = -1)
+
+    @Column(name = "email", nullable = false)
     private String email;
-    @Basic
-    @Column(name = "full_name", nullable = false, length = -1)
+
+    @Column(name = "full_name", nullable = false)
     private String fullName;
-    @Basic
-    @Column(name = "password", nullable = false, length = -1)
+
+    @Column(name = "password", nullable = false)
     private String password;
 
 }

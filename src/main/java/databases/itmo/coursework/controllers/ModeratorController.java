@@ -4,7 +4,7 @@ package databases.itmo.coursework.controllers;
 import databases.itmo.coursework.model.Verdict;
 import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.ModeratorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,11 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
+@AllArgsConstructor
 @RequestMapping(path="/moderator")
 public class ModeratorController {
 
-    @Autowired
-    ModeratorService moderatorService;
+    private final ModeratorService moderatorService;
 
     @GetMapping
     public String mainPage(Model model) {

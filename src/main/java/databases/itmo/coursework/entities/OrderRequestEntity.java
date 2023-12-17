@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "order_request")//, schema = "s312431", catalog = "studs")
+@Table(name = "order_request", schema = "s312431")
 public class OrderRequestEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,7 +28,7 @@ public class OrderRequestEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
-    @ManyToOne(targetEntity = CustomerEntity.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customer;
 
@@ -39,17 +39,14 @@ public class OrderRequestEntity {
     @ManyToOne(targetEntity = CompetenceEntity.class)
     @JoinColumn(name = "competence")
     private CompetenceEntity competence;
-    @Basic
     @Column(name = "price", nullable = false)
     private Integer price;
-    @Basic
     @Column(name = "description", nullable = false)
     private String description;
-    @Basic
-    @Column(name = "isPrivate", nullable = true)
+    @Column(name = "isPrivate")
     private Boolean isPrivate;
 
-    @Column(name = "status", nullable = true)
+    @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private OrderRequestStatus status;
 

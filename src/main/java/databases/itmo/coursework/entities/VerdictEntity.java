@@ -13,7 +13,7 @@ import jakarta.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "verdict")
+@Table(name = "verdict", schema = "s312431")
 public class VerdictEntity {
     @EmbeddedId
     private VerdictId verdictId;
