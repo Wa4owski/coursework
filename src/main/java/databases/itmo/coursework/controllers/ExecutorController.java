@@ -6,11 +6,14 @@ import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.ExecutorService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.hibernate.sql.exec.ExecutionException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
 
 @Controller
 @AllArgsConstructor
@@ -19,59 +22,69 @@ public class ExecutorController {
 
     private final ExecutorService executorService;
 
-    @GetMapping(path = "/orderRequests/{competence}")
+    @GetMapping(path = "/order-requests/{competence}")
     public String getPublicOrderRequests(@PathVariable(name = "competence") String competenceName,
                                          @ModelAttribute("chosenOrderRequest") OrderRequest orderRequest,
                                          Model model){
-        model.addAttribute("orderRequests", executorService.getFreeOrderRequestsByCompetence(competenceName));
-        return "/executor/orderRequests";
+        Integer executorId = (Integer)model.getAttribute("executorId");
+        model.addAttribute("competenceMatches", executorService.isCompetenceMatchesExecutor(executorId, competenceName));
+        model.addAttribute("orderRequests", executorService.getFreeOrderRequestsByCompetence(executorId, competenceName));
+        return "/executor/order-requests";
     }
 
-    @PostMapping(path = "/orderRequests/choose")
+    @GetMapping(path = "/customer-feedbacks")
+    public String getExecutorProfilePage(@RequestParam("customerId") Integer executorId,
+                                         Model model){
+        model.addAttribute("customer", executorService.getCustomerById(executorId));
+        model.addAttribute("feedbacks", executorService.getAllCustomerFeedbacks(executorId));
+        return "executor/customer-feedbacks";
+    }
+
+    @PostMapping(path = "/order-requests/choose")
     public String chooseOrderRequest(@ModelAttribute("chosenOrderRequest") OrderRequest orderRequest,
                                      Model model){
         executorService.chooseOrderRequest(orderRequest, (Integer)model.getAttribute("executorId"));
-        return "redirect:/executor/orderRequests/"+orderRequest.getCompetence();
+        return "redirect:/executor/order-requests/" + encodePath(orderRequest.getCompetence());
     }
 
-    @GetMapping(path = "/myOrderRequests/public")
+    @GetMapping(path = "/my-order-requests/public")
     public String myPublicOrderRequests(@ModelAttribute("publicOrderRequest") OrderRequest orderRequest,
                                         Model model){
         Integer executorId = (Integer)model.getAttribute("executorId");
         model.addAttribute("orderRequests", executorService.getPublicOrderRequestsByExecutorId(executorId));
-        return "executor/myOrderRequests";
+        return "/executor/my-order-requests";
     }
 
-    @GetMapping(path = "/myOrderRequests/private")
+    @GetMapping(path = "/my-order-requests/private")
     public String myPrivateOrderRequests(@ModelAttribute("privateOrderRequest") OrderRequest orderRequest,
                                         Model model){
         Integer executorId = (Integer)model.getAttribute("executorId");
         model.addAttribute("orderRequests", executorService.getPrivateOrderRequestsByExecutorId(executorId));
-        return "executor/myOrderRequests";
+        return "/executor/my-order-requests";
     }
 
-    @PostMapping(path = "/myOrderRequests/private/decline")
+    @PostMapping(path = "/my-order-requests/private/decline")
     public String declineMyPrivateOrderRequest(@ModelAttribute("privateOrderRequest") OrderRequest orderRequest,
                                              Model model){
         Integer executorId = (Integer)model.getAttribute("executorId");
         executorService.declinePrivateOrderRequest(executorId, orderRequest.getId());
-        return "redirect:/executor/myOrderRequests/private";
+        return "redirect:/executor/my-order-requests/private";
     }
 
-    @PostMapping(path = "/myOrderRequests/private/accept")
+    @PostMapping(path = "/my-order-requests/private/accept")
     public String acceptMyPrivateOrderRequest(@ModelAttribute("privateOrderRequest") OrderRequest orderRequest,
                                                Model model){
         Integer executorId = (Integer)model.getAttribute("executorId");
         executorService.acceptPrivateOrderRequest(executorId, orderRequest.getId());
-        return "redirect:/executor/myOrderRequests/private";
+        return "redirect:/executor/my-order-requests/private";
     }
 
-    @PostMapping(path = "/myOrderRequests/public/revoke")
+    @PostMapping(path = "/my-order-requests/public/revoke")
     public String revokeMyPublicOrderRequest(@ModelAttribute("publicOrderRequest") OrderRequest orderRequest,
                                              Model model){
         Integer executorId = (Integer)model.getAttribute("executorId");
         executorService.revokeAgrToPublicOrderRequest(executorId, orderRequest.getId());
-        return "redirect:/executor/myOrderRequests/public";
+        return "redirect:/executor/my-order-requests/public";
     }
 
     @GetMapping(path = "/orders")
@@ -82,7 +95,7 @@ public class ExecutorController {
         return "executor/orders";
     }
 
-    @PostMapping("orders/sendFeedback")
+    @PostMapping("/orders/send-feedback")
     public String sendFeedback(@Valid @ModelAttribute("feedback") FeedbackDTO feedback,
                                BindingResult result,
                                Model model){

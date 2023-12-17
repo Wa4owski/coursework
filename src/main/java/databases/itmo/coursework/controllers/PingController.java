@@ -13,7 +13,7 @@ public class PingController {
     public String base(Model model){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("customer", auth.getName());
-        return "redirect:customer/newOrder";
+        return "redirect:customer/new-order";
     }
 
     @GetMapping(path = "/executor/1")

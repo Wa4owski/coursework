@@ -25,25 +25,25 @@ public class ModeratorController {
         return "/moderator/moderator";
     }
 
-    @GetMapping(path = "/newVerdict")
+    @GetMapping(path = "/new-verdict")
     public String newVerdictPage(){
-        return "/moderator/newVerdict";
+        return "new-verdict";
     }
 
     @GetMapping(path="/addVerdict")
-    public String newVerdictPage(@RequestParam(name="order_id") Integer order_id, Model model) {
-        model.addAttribute("order_id", order_id);
+    public String newVerdictPage(@RequestParam(name="orderId") Integer orderId, Model model) {
+        model.addAttribute("orderId", orderId);
         model.addAttribute("verdict", new Verdict());
-        return "/moderator/newVerdict";
+        return "/moderator/new-verdict";
     }
 
-    @PostMapping(path="/newVerdict")
+    @PostMapping(path="/new-verdict")
     public ModelAndView newVerdict(Model model,
                              @RequestParam(name="order_id") Integer orderId) {
         Verdict newVerdict = new Verdict();
         newVerdict.setOrderId(orderId);
         model.addAttribute("verdict", newVerdict);
-        return new ModelAndView("/moderator/newVerdict");
+        return new ModelAndView("moderator/new-verdict");
     }
 
     @PostMapping(path="/addVerdict")

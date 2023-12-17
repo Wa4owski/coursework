@@ -9,7 +9,6 @@ import databases.itmo.coursework.repo.ExecutorRepo;
 import databases.itmo.coursework.repo.OrderRequestExecutorRepo;
 import lombok.AllArgsConstructor;
 import org.hibernate.sql.exec.ExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -85,7 +84,7 @@ public class CustomerService extends AbstractUserService{
         OrderRequestExecutorEntity orderRequestExecutor;
         if(optionalOrderRequestExecutor.isPresent()){
             orderRequestExecutor = optionalOrderRequestExecutor.get();
-            if(orderRequestExecutor.getCustomerAgr() != null &&
+            if(orderRequestExecutor.customerAgrIsSet() &&
                     orderRequestExecutor.getCustomerAgr()){
                 throw new ExecutionException("Such pair: <executor, orderRequest> is already exists");
             }
@@ -181,5 +180,27 @@ public class CustomerService extends AbstractUserService{
 
         order.addFeedback(feedback, FeedbackId.ClientType.customer);
         orderRepo.save(order);
+    }
+
+    public List<Executor> getFreeExecutorsByCompetence(Integer orderRequestId) {
+        OrderRequestEntity orderRequest = orderRequestRepo.findById(orderRequestId)
+                .orElseThrow(()->new IllegalArgumentException("no orderRequest with such id"));
+        return executorRepo.findFreeExecutorsByCompetence(orderRequest.getId(), orderRequest.getCompetence())
+                .stream().map(Executor::new).collect(Collectors.toList());
+    }
+
+    private ExecutorEntity getExecutorEntityById(Integer executorId) {
+        return executorRepo.findById(executorId)
+                .orElseThrow(()->new IllegalArgumentException("no executor with such id"));
+    }
+
+    public Executor getExecutorById(Integer executorId){
+        return new Executor(getExecutorEntityById(executorId));
+    }
+
+    public List<FeedbackDTO> getAllExecutorsFeedbacks(Integer executorId){
+        var executor = getExecutorEntityById(executorId);
+        return orderRepo.findAllFeedbackAboutExecutor(executor)
+                .stream().map(FeedbackDTO::new).collect(Collectors.toList());
     }
 }

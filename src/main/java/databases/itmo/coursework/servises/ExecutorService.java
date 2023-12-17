@@ -9,7 +9,6 @@ import databases.itmo.coursework.repo.ExecutorRepo;
 import databases.itmo.coursework.repo.OrderRequestExecutorRepo;
 import lombok.AllArgsConstructor;
 import org.hibernate.sql.exec.ExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,5 +147,29 @@ public class ExecutorService extends AbstractUserService {
         }
         order.addFeedback(feedback, FeedbackId.ClientType.executor);
         orderRepo.save(order);
+    }
+
+    public Boolean isCompetenceMatchesExecutor(Integer executorId, String competenceName) {
+        var competence = competenceRepo.findByCompetence(competenceName)
+                .orElseThrow(() -> new IllegalArgumentException("No competence with such name"));
+        return executorRepo.findById(executorId)
+                .orElseThrow(() -> new IllegalArgumentException("No executor with such id"))
+                .getCompetences().contains(competence);
+    }
+
+
+    private CustomerEntity getCustomerEntityById(Integer customerId) {
+        return customerRepo.findById(customerId)
+                .orElseThrow(()->new IllegalArgumentException("no executor with such id"));
+    }
+
+    public Customer getCustomerById(Integer executorId){
+        return new Customer(getCustomerEntityById(executorId));
+    }
+
+    public List<FeedbackDTO> getAllCustomerFeedbacks(Integer customerId){
+        var customer = getCustomerEntityById(customerId);
+        return orderRepo.findAllFeedbackAboutCustomer(customer)
+                .stream().map(FeedbackDTO::new).collect(Collectors.toList());
     }
 }

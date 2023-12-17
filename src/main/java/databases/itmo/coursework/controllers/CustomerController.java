@@ -1,6 +1,9 @@
 package databases.itmo.coursework.controllers;
 
-import databases.itmo.coursework.model.*;
+import databases.itmo.coursework.model.FeedbackDTO;
+import databases.itmo.coursework.model.OrderRequest;
+import databases.itmo.coursework.model.OrderRequestExecutorIdDto;
+import databases.itmo.coursework.model.OrderVisibility;
 import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.CustomerService;
 import jakarta.validation.Valid;
@@ -29,67 +32,68 @@ public class CustomerController {
                                         Model model){
         if(orderRequestId != null){
             model.addAttribute("orderRequestId", orderRequestId);
+            model.addAttribute("executors", customerService.getFreeExecutorsByCompetence(orderRequestId));
+        }
+        else{
+            model.addAttribute("executors", customerService.getExecutorsByCompetence(competenceName));
         }
         if(message != null){
             model.addAttribute("message", message);
         }
         model.addAttribute("competence", competenceName);
-        List<Executor> executors = customerService.getExecutorsByCompetence(competenceName);
-        model.addAttribute("executors", executors);
         return "customer/executors";
     }
 
-    @GetMapping(path = "/newOrder")
+    @GetMapping(path = "/new-order")
     public String newOrderPage(@ModelAttribute("orderRequest") OrderRequest orderRequest,
                                Model model){
-        return "/customer/newOrder";
+        return "/customer/new-order";
     }
 
-    @GetMapping(path = "/orderRequests")
+    @GetMapping(path = "/order-requests")
     public String newPerson(@ModelAttribute("chooseOrderRequest") OrderRequest orderRequest,
                             @ModelAttribute("orderRequestIdExecutorId") OrderRequestExecutorIdDto requestIdExecutorIdDto,
                             Model model) {
         Integer customerId = (Integer)model.getAttribute("customerId");
         model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(customerId));
-        return "customer/orderRequests";
+        return "customer/order-requests";
     }
 
 
     @PostMapping
     public ModelAndView createOrder(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest,
-                                    BindingResult result, Authentication auth, ModelMap model) {
+                                    BindingResult result,  ModelMap model) {
         if (result.hasErrors()) {
-            return new ModelAndView("customer/newOrder", model);
+            return new ModelAndView("customer/new-order", model);
         }
-        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-        Integer customerId = userPrincipal.getUserSpecId();
+        Integer customerId = (Integer)model.getAttribute("customerId");
         Integer orderRequestId = customerService.createNewOrderRequest(customerId, orderRequest);
         orderRequest.setId(orderRequestId);
         if(orderRequest.getAccess().equals(OrderVisibility.public_)) {
-            return new ModelAndView("redirect:/customer/orderRequests");
+            return new ModelAndView("redirect:/customer/order-requests");
         }
         else {
             ModelMap queryParam = new ModelMap("orderRequestId", orderRequestId);
-            return new ModelAndView("redirect:/customer/executors/" + orderRequest.getCompetence(), queryParam);
+            return new ModelAndView("redirect:/customer/executors/" + encodePath(orderRequest.getCompetence()), queryParam);
         }
     }
 
-    @PostMapping(path = "/addExecutor")
+    @PostMapping(path = "/add-executor")
     public ModelAndView addExecutor(@RequestParam("orderRequestId") Integer orderRequestId,
                                     @RequestParam("executorId") Integer executorId,
                                     @RequestParam("competence") String competence,
-                                    Authentication auth,
+                                    Model model,
                                     ModelMap redirectParams) {
-        Integer customerId = ((UserPrincipal) auth.getPrincipal()).getUserSpecId();
+        Integer customerId = (Integer)model.getAttribute("customerId");
         OrderRequestExecutorIdDto orderRequestExecutorId = new OrderRequestExecutorIdDto(orderRequestId, executorId);
         int placesRemain = customerService.addExecutorToOrderRequest(orderRequestExecutorId, customerId);
         if (placesRemain > 0) {
             redirectParams.addAttribute("message", String.format("Исполнитель получил ваше приглашение, отследить его согласие вы можете в разделе" +
                     " Мои заявки. Вы можете выбрать еще %d исполнителя для выполнения вашего заказа.", placesRemain));
             redirectParams.addAttribute("orderRequestId", orderRequestId);
-            return new ModelAndView("redirect:/customer/executors/" + competence, redirectParams);
+            return new ModelAndView("redirect:/customer/executors/" + encodePath(competence), redirectParams);
         }
-        return new ModelAndView("redirect:/customer/orderRequests");
+        return new ModelAndView("redirect:/customer/order-requests");
     }
 
     @GetMapping("/orders")
@@ -100,7 +104,7 @@ public class CustomerController {
         return "/customer/orders";
     }
 
-    @PostMapping("orders/sendFeedback")
+    @PostMapping("orders/send-feedback")
     public String sendFeedback(@Valid @ModelAttribute("feedback") FeedbackDTO feedback,
                                BindingResult result,
                                Model model){
@@ -114,7 +118,7 @@ public class CustomerController {
         return "redirect:/customer/orders";
     }
 
-    @PostMapping("/orderRequests/decline")
+    @PostMapping("/order-requests/decline")
     public String declineExecutor(@RequestParam Integer orderRequestId,
                                   @RequestParam Integer executorId,
                                   Authentication auth,
@@ -122,30 +126,38 @@ public class CustomerController {
         Integer customerId = ((UserPrincipal) auth.getPrincipal()).getUserSpecId();
         customerService.declineExecutor(new OrderRequestExecutorIdDto(orderRequestId, executorId), customerId);
         model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(executorId));
-        return "customer/orderRequests";
+        return "customer/order-requests";
     }
 
-    @PostMapping("/orderRequests/accept")
+    @PostMapping("/order-requests/accept")
     public String acceptExecutorRequest(@ModelAttribute("orderRequestIdExecutorId") OrderRequestExecutorIdDto requestIdExecutorIdDto,
                                         Model model){
         Integer customerId = (Integer) model.getAttribute("customerId");
         customerService.acceptExecutor(requestIdExecutorIdDto,
                 customerId);
         model.addAttribute("orderRequests", customerService.getOpenedOrderRequests(customerId));
-        return "customer/orderRequests";
+        return "customer/order-requests";
     }
 
-    @GetMapping("/orderRequests/choose")
+    @GetMapping("/order-requests/choose")
     public ModelAndView choosePrivateExecutors(@ModelAttribute("chooseOrderRequest") OrderRequest orderRequest,
                                          Model model, ModelMap redirectParams){
         if(customerService.privateExecutorsPlacesRemain(orderRequest.getId(),
                 (Integer)model.getAttribute("customerId")) > 0){
             redirectParams.addAttribute("orderRequestId", orderRequest.getId());
-            return new ModelAndView("redirect:/customer/executors/" + orderRequest.getCompetence(), redirectParams);
+            return new ModelAndView("redirect:/customer/executors/" + encodePath(orderRequest.getCompetence()), redirectParams);
         }
-        model.addAttribute("error", "Вы пригласили максимально допусимое число исполнителей." +
+        model.addAttribute("error", "Вы пригласили максимально допустимое число исполнителей." +
                 "Если хотите заменить кого-то, сперва отзовите запрос");
-        return new ModelAndView("customer/orderRequests");
+        return new ModelAndView("redirect:/customer/order-requests");
+    }
+
+    @GetMapping(path = "/executor-feedbacks")
+    public String getExecutorProfilePage(@RequestParam("executorId") Integer executorId,
+                                         Model model){
+        model.addAttribute("executor", customerService.getExecutorById(executorId));
+        model.addAttribute("feedbacks", customerService.getAllExecutorsFeedbacks(executorId));
+        return "/customer/executor-feedbacks";
     }
 
     @ModelAttribute

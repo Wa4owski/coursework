@@ -22,12 +22,12 @@
                 </a>
             </li>
             <li>
-                <a th:href="@{/customer/newOrder}" class="nav-link align-middle px-0 "><!--data-bs-toggle="collapse"-->
+                <a th:href="@{/customer/new-order}" class="nav-link align-middle px-0 "><!--data-bs-toggle="collapse"-->
                     <i class="fs-4 bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">Новый заказ</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/customer/orderRequests}" class="nav-link px-0 align-middle">
+                <a th:href="@{/customer/order-requests}" class="nav-link px-0 align-middle">
                     <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Мои заявки</span>
                 </a>
             </li>
@@ -77,7 +77,7 @@
                     <i class="fs-4 bi-search"></i> <span class="ms-1 d-none d-sm-inline">Искать заказы</span></a>
                 <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                     <li class="w-100" th:each="competence : ${competences}">
-                        <a th:href="@{/executor/orderRequests/{id}(id=${competence})}" class="nav-link px-0"> <span
+                        <a th:href="@{/executor/order-requests/{id}(id=${competence})}" class="nav-link px-0"> <span
                                 class="d-none d-sm-inline" th:text="${competence}">comp</span> </a>
                     </li>
                 </ul>
@@ -88,12 +88,12 @@
                 </a>
                 <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
                     <li class="w-100">
-                        <a th:href="@{/executor/myOrderRequests/private}" class="nav-link px-0">
+                        <a th:href="@{/executor/my-order-requests/private}" class="nav-link px-0">
                             <span class="d-none d-sm-inline">персональные</span>
                         </a>
                     </li>
                     <li class="w-100">
-                        <a th:href="@{/executor/myOrderRequests/public}" class="nav-link px-0">
+                        <a th:href="@{/executor/my-order-requests/public}" class="nav-link px-0">
                             <span class="d-none d-sm-inline">общие</span>
                         </a>
                     </li>

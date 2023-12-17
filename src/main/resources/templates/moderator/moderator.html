@@ -44,7 +44,7 @@
                                 <h4>Отзыв исполнителя</h4>
                                 <p th:text="${ticket.executorFeedback}"/>
                             </div>
-                            <form th:method="POST" th:action="@{/moderator/newVerdict}" class="card mb-3">
+                            <form th:method="POST" th:action="@{/moderator/new-verdict}" class="card mb-3">
                                 <input type="hidden" name="order_id"  th:value="${ticket.orderEntity.getId()}"/>
                                 <button type="submit" class="btn btn-danger">New verdict</button>
                             </form>

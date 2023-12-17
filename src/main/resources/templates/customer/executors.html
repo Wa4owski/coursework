@@ -52,8 +52,18 @@
                             <img th:src="@{/images/monkey.jpg}" alt="monkey" class="card-img-top"  />
                             <h5 class="card-header" th:text="${executor.name}"/>
                             <div class="card-body">
-                                <i class="fs-5 bi-star"></i><h6 class="card-title" th:text="${executor.rate} ?: '0'"/>
-                                <form th:if="${orderRequestId != null}" th:method="POST" th:action="@{/customer/addExecutor} ">
+                                <div class="row">
+                                    <div class="col">
+                                        <i class="fs-5 bi-star"></i><h6 class="card-title" th:text="${executor.rate} ?: '0'"/>
+                                    </div>
+                                    <div class="col">
+                                        <form th:method="GET" th:action="@{/customer/executor-feedbacks}">
+                                            <input type="hidden" name="executorId" th:value="${executor.id}"/>
+                                            <button type="submit" class="btn btn-primary">Смотреть отзывы</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <form th:if="${orderRequestId != null}" th:method="POST" th:action="@{/customer/add-executor} ">
                                     <input type="hidden" name="executorId"  th:value="${executor.id}" />
                                     <input type="hidden" name="orderRequestId" th:value="${orderRequestId}">
                                     <input type="hidden" name="competence" th:value="${competence}">

@@ -50,7 +50,7 @@
                                             <td th:text="${executor.name}"/>
                                             <td th:text="${executor.rate} ?: '0'"/>
                                             <td th:if="${orderRequest.access.name() == 'private_'}">
-                                                <form th:method="POST" th:action="@{/customer/orderRequests/decline}">
+                                                <form th:method="POST" th:action="@{/customer/order-requests/decline}">
                                                     <input type="hidden" name="executorId" th:value="${executor.id}"/>
                                                     <input type="hidden" name="orderRequestId" th:value="${orderRequest.id}"/>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
@@ -58,12 +58,12 @@
                                             </td>
                                             <td th:if="${orderRequest.access.name() == 'public_'}">
                                                 <div class="btn-group">
-                                                    <form th:method="POST" th:action="@{/customer/orderRequests/accept}" th:object="${orderRequestIdExecutorId}">
+                                                    <form th:method="POST" th:action="@{/customer/order-requests/accept}" th:object="${orderRequestIdExecutorId}">
                                                         <input type="hidden" id="executorId" name="executorId" th:value="${executor.id}"/>
                                                         <input type="hidden" id="orderRequestId" name="orderRequestId" th:value="${orderRequest.id}"/>
                                                         <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check2"></i></button>
                                                     </form>
-                                                    <form th:method="POST" th:action="@{/customer/orderRequests/decline}">
+                                                    <form th:method="POST" th:action="@{/customer/order-requests/decline}">
                                                         <input type="hidden" name="executorId" th:value="${executor.id}"/>
                                                         <input type="hidden" name="orderRequestId" th:value="${orderRequest.id}"/>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
@@ -74,7 +74,7 @@
                                     </tbody>
                                 </table>
                                 <div th:if="${orderRequest.access.name() == 'private_'}" class="d-flex justify-content-between align-items-center">
-                                    <form th:method="GET" th:action="@{/customer/orderRequests/choose}" th:object="${chooseOrderRequest}">
+                                    <form th:method="GET" th:action="@{/customer/order-requests/choose}" th:object="${chooseOrderRequest}">
                                         <input type="hidden" id="id" name="id" th:value="${orderRequest.id}"/>
                                         <input type="hidden" id="competence" name="competence" th:value="${orderRequest.competence}"/>
                                         <button type="submit" class="btn btn-primary">Пригласить исполнителей</button>
