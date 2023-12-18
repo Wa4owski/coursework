@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @AllArgsConstructor
 @RequestMapping(path="/moderator")
-public class ModeratorController {
+public class ModeratorController extends BaseController{
 
     private final ModeratorService moderatorService;
 
@@ -27,7 +27,7 @@ public class ModeratorController {
 
     @GetMapping(path = "/new-verdict")
     public String newVerdictPage(){
-        return "new-verdict";
+        return "/moderator/new-verdict";
     }
 
     @GetMapping(path="/addVerdict")
@@ -53,8 +53,8 @@ public class ModeratorController {
         return "redirect:/moderator";
     }
 
-    @ModelAttribute
-    public void addAttributesForMenu(Model model, Authentication auth){
+    @Override
+    protected void addAttributesForMenu(Model model, Authentication auth){
         UserPrincipal user = (UserPrincipal)auth.getPrincipal();
         model.addAttribute("userName", user.getPersonEntity().getFullName());
         model.addAttribute("moderatorId", user.getUserSpecId());

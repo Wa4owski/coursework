@@ -6,19 +6,16 @@ import databases.itmo.coursework.security.UserPrincipal;
 import databases.itmo.coursework.servises.ExecutorService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.hibernate.sql.exec.ExecutionException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriUtils;
 
 @Controller
 @AllArgsConstructor
 @RequestMapping(path = "/executor")
-public class ExecutorController {
+public class ExecutorController extends BaseController{
 
     private final ExecutorService executorService;
 
@@ -110,7 +107,7 @@ public class ExecutorController {
     }
 
 
-    @ModelAttribute
+    @Override
     public void addAttributesForMenu(Model model, Authentication auth){
         model.addAttribute("competences", executorService.getAllCompetences());
         UserPrincipal user = (UserPrincipal)auth.getPrincipal();

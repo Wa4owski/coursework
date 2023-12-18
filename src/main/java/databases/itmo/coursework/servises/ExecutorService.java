@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,22 +24,26 @@ public class ExecutorService extends AbstractUserService {
 
     private final CustomerRepo customerRepo;
 
-    public List<OrderRequest> getFreeOrderRequestsByCompetence(String competenceName) {
-        return competenceRepo.findByCompetence(competenceName)
-                .orElseThrow(() -> new ExecutionException("No competence with such name"))
-                .getOrderRequests().stream()
     private final OrderRequestExecutorRepo orderRequestExecutorRepo;
 
+    public List<OrderRequest> getFreeOrderRequestsByCompetence(Integer executorId, String competenceName) {
+        var competence = competenceRepo.findByCompetence(competenceName)
+                .orElseThrow(() -> new IllegalArgumentException("No competence with such name"));
+        var executor = executorRepo.findById(executorId)
+               .orElseThrow(() -> new IllegalArgumentException("No executor with such id"));
+        return orderRequestRepo.findFreeOrderRequestsForExecutorByCompetence(executor, competence)
+                .stream()
                 .filter(orderRequest -> !orderRequest.getIsPrivate()
                         && orderRequest.getStatus().equals(OrderRequestStatus.opened))
-                .map(OrderRequest::new).collect(Collectors.toList());
+                .map(OrderRequest::new)
+                .collect(Collectors.toList());
     }
 
     public List<OrderRequest> getPublicOrderRequestsByExecutorId(Integer executorId) {
         return executorRepo.findById(executorId).orElseThrow(() -> new ExecutionException("No executor with such id"))
                 .getMyOrderRequests()
                 .stream()
-                .filter(orderRequestExecutor -> orderRequestExecutor.executorAgrIsSet() && orderRequestExecutor.getExecutorAgr())
+                .filter(orderRequestExecutor -> orderRequestExecutor.executorAgrIsSet() && Boolean.TRUE.equals(orderRequestExecutor.getExecutorAgr()))
                 .map(orderRequestExecutor -> orderRequestExecutor.getPrimaryKey().getOrderRequest())
                 .filter(orderRequest -> !orderRequest.getIsPrivate() && orderRequest.getStatus().equals(OrderRequestStatus.opened))
                 .map(OrderRequest::new)
@@ -73,7 +78,7 @@ public class ExecutorService extends AbstractUserService {
         OrderRequestExecutorEntity orderRequestExecutor = orderRequestExecutorRepo
                 .findByPrimaryKey(primaryKey).orElse(null);
         if (orderRequestExecutor != null) {
-            if (orderRequestExecutor.getExecutorAgr()) {
+            if (Boolean.TRUE.equals(orderRequestExecutor.getExecutorAgr())) {
                 throw new ExecutionException("executor has already given agr to this orderRequest");
             }
             orderRequestExecutor.setExecutorAgr(true);
@@ -104,7 +109,7 @@ public class ExecutorService extends AbstractUserService {
         if (!orderRequestExecutor.executorAgrIsSet()) {
             throw new ExecutionException("can't revoke, executor agr is null");
         }
-        if (!orderRequestExecutor.getExecutorAgr()) {
+        if (Boolean.FALSE.equals(orderRequestExecutor.getExecutorAgr())) {
             throw new ExecutionException("can't revoke, executor agr is false");
         }
         orderRequestExecutor.setExecutorAgr(false);
@@ -139,7 +144,7 @@ public class ExecutorService extends AbstractUserService {
     public void sendFeedback(FeedbackDTO feedback, Integer executorId) {
         OrderEntity order = orderRepo.findById(feedback.getOrderId())
                 .orElseThrow(() -> new ExecutionException("no order with such id"));
-        if(order.getExecutor().getId() != executorId){
+        if(!Objects.equals(order.getExecutor().getId(), executorId)){
             throw new ExecutionException("this order doesn't belong to executor");
         }
         if (order.clientSentFeedback(FeedbackId.ClientType.executor)) {

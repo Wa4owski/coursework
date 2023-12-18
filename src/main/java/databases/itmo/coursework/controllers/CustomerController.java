@@ -16,12 +16,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-
 @Controller
 @AllArgsConstructor
 @RequestMapping(path = "/customer")
-public class CustomerController {
+public class CustomerController extends BaseController{
 
     private final CustomerService customerService;
 
@@ -160,7 +158,7 @@ public class CustomerController {
         return "/customer/executor-feedbacks";
     }
 
-    @ModelAttribute
+    @Override
     public void addAttributesForMenu(Model model, Authentication auth){
         model.addAttribute("competences", customerService.getAllCompetences());
         UserPrincipal user = (UserPrincipal)auth.getPrincipal();
@@ -168,18 +166,4 @@ public class CustomerController {
         model.addAttribute("customerId", user.getUserSpecId());
     }
 
-
-
-
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return errors;
-//    }
 }

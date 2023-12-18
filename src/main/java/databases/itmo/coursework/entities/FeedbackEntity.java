@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "feedback")
+@Table(name = "feedback", schema = "s312431")
 public class FeedbackEntity {
 
     @EmbeddedId

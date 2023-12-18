@@ -1,7 +1,6 @@
 package databases.itmo.coursework.model;
 
 import databases.itmo.coursework.entities.OrderEntity;
-import databases.itmo.coursework.entities.OrderRequestEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,10 +17,15 @@ public class OrderDTO {
 
     private OrderStatus status;
 
+    private Executor executor;
+    private Customer customer;
+
     public OrderDTO(OrderEntity orderEntity) {
         this.id = orderEntity.getId();
-        this.executorId = orderEntity.getExecutor().getId();
-        this.customerId = orderEntity.getCustomer().getId();
+        this.executor = new Executor(orderEntity.getExecutor());
+        this.executorId = executor.getId();
+        this.customer = new Customer(orderEntity.getCustomer());
+        this.customerId = customer.getId();
         this.orderRequest = new OrderRequest(orderEntity.getOrderRequest());
         this.status = orderEntity.getStatus();
     }

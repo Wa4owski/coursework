@@ -12,6 +12,7 @@ import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class CustomerService extends AbstractUserService{
 
     public Integer createNewOrderRequest(Integer customerId, OrderRequest orderRequest){
         CustomerEntity customer = customerRepo.findById(customerId)
-                .orElseThrow(()->new ExecutionException("customerId is incorrect"));
+                .orElseThrow(()->new IllegalArgumentException("customerId is incorrect"));
         CompetenceEntity competence = competenceRepo.findByCompetence(orderRequest.getCompetence())
                 .orElseThrow(()->new ExecutionException("competence is out of database"));
         return orderRequestRepo.save(new OrderRequestEntity(customer, competence, orderRequest)).getId();
@@ -73,7 +74,7 @@ public class CustomerService extends AbstractUserService{
     public int  addExecutorToOrderRequest(OrderRequestExecutorIdDto orderRequestExecutorIdDto, Integer customerId) throws ExecutionException {
         OrderRequestEntity orderRequest = orderRequestRepo.findById(orderRequestExecutorIdDto.getOrderRequestId())
                 .orElseThrow(()->new ExecutionException("No orderRequest with such id"));
-        if(orderRequest.getCustomer().getId() != customerId){
+        if(!Objects.equals(orderRequest.getCustomer().getId(), customerId)){
             throw new ExecutionException("orderRequest doesn't belong to customer");
         }
         ExecutorEntity executor = executorRepo.findById(orderRequestExecutorIdDto.getExecutorId())
@@ -85,7 +86,7 @@ public class CustomerService extends AbstractUserService{
         if(optionalOrderRequestExecutor.isPresent()){
             orderRequestExecutor = optionalOrderRequestExecutor.get();
             if(orderRequestExecutor.customerAgrIsSet() &&
-                    orderRequestExecutor.getCustomerAgr()){
+                    Boolean.TRUE.equals(orderRequestExecutor.getCustomerAgr())){
                 throw new ExecutionException("Such pair: <executor, orderRequest> is already exists");
             }
             else {
@@ -113,7 +114,7 @@ public class CustomerService extends AbstractUserService{
     public int privateExecutorsPlacesRemain(Integer orderRequestId, Integer customerId){
         OrderRequestEntity orderRequest = orderRequestRepo.findById(orderRequestId)
                 .orElseThrow(()->new ExecutionException("No orderRequest with such id"));
-        if(orderRequest.getCustomer().getId() != customerId){
+        if(!Objects.equals(orderRequest.getCustomer().getId(), customerId)){
             throw new ExecutionException("orderRequest doesn't belong to customer");
         }
         return privateExecutorsPlacesRemain(orderRequest);
@@ -126,7 +127,7 @@ public class CustomerService extends AbstractUserService{
                 customerId,
                 orderRequestExecutorIdDto.getExecutorId());
 
-        if(!orderRequestExecutor.getCustomerAgr()){
+        if(Boolean.FALSE.equals(orderRequestExecutor.getCustomerAgr())){
             throw new ExecutionException("executor is already declined!");
         }
 
@@ -141,7 +142,7 @@ public class CustomerService extends AbstractUserService{
                 orderRequestExecutorIdDto.getExecutorId());
 
         try {
-            if (orderRequestExecutor.getCustomerAgr()) {
+            if (Boolean.TRUE.equals(orderRequestExecutor.getCustomerAgr())) {
                 throw new ExecutionException("executor is already accepted!");
             }
         }
@@ -156,7 +157,7 @@ public class CustomerService extends AbstractUserService{
                                                Integer executorId){
         OrderRequestEntity orderRequest = orderRequestRepo.findById(orderRequestId)
                 .orElseThrow(()->new ExecutionException("No orderRequest with such id"));
-        if(orderRequest.getCustomer().getId() != customerId){
+        if(!Objects.equals(orderRequest.getCustomer().getId(), customerId)){
             throw new ExecutionException("orderRequest doesn't belong to customer");
         }
         ExecutorEntity executor = executorRepo.findById(executorId)
@@ -171,7 +172,7 @@ public class CustomerService extends AbstractUserService{
     public void sendFeedback(FeedbackDTO feedback, Integer customerId) {
         OrderEntity order = orderRepo.findById(feedback.getOrderId())
                 .orElseThrow(()->new ExecutionException("no order with such id"));
-        if(order.getCustomer().getId() != customerId){
+        if(!Objects.equals(order.getCustomer().getId(), customerId)){
             throw new ExecutionException("this order doesn't belong to customer");
         }
         if(order.clientSentFeedback(FeedbackId.ClientType.customer)){
